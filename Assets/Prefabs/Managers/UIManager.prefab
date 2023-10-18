@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6120806047813414569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6120806047813414551}
+  - component: {fileID: 6120806047813414568}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: UIManager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6120806047813414551
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6120806047813414569}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6120806047813414568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6120806047813414569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 748d1f72fcc78644185a4c159df198fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentPanel: 0
+  panels: []
+  mainPanel: {fileID: 5096727521886659847, guid: 4e162773d498000419b8e22a22e481cf,
+    type: 3}
+  loadPanel: {fileID: 2027506374088414725, guid: d548fbe345e911f4596e805de878fe20,
+    type: 3}
+  optionPanel: {fileID: 1451079960423075887, guid: 8f9af1a3fa25a2b498339be2eab55ca5,
+    type: 3}
+  creditsPanel: {fileID: 2027506374088414725, guid: de2d51b4a779bcd4eabbe3a5b284ff29,
+    type: 3}
+  captionPanel: {fileID: 8768513625930895843, guid: 5c05c35888041eb4fac4059aaad6656d,
+    type: 3}
+  gameMenuPanel: {fileID: 7273135102378910262, guid: a987aa51ad5fec94d83731d3acdf138b,
+    type: 3}
+  isClicked: 0
+  isBlacked: 0
+  blackOutPanel: {fileID: 7926307558006990490, guid: 0d0345e6844409b43b69dab609393580,
+    type: 3}
+  captionSpeed: 0
+  masterVolume: 0
+  bgmVolume: 0
+  sfxVolume: 0
