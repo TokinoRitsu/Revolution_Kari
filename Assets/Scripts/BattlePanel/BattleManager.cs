@@ -11,10 +11,30 @@ public class BattleManager : MonoBehaviour
     {
         Encounter,
         WaitForAction,
-        WaitForOpponent,
         Processing,
         End
     }
+    public class tempUnit
+    {
+        public bool isAlly;
+        public unit unit;
+        public stats statsLevel;
+        public stats tempStats;
+        public bool isFlinched;
+        public bool isConfused;
+        public int confuseTurn;
+        public tempUnit(bool _isAlly, unit _unit)
+        {
+            isAlly = _isAlly;
+            unit = _unit;
+            statsLevel = new stats();
+            tempStats = new stats();
+            isFlinched = false;
+            isConfused = false;
+            confuseTurn = 0;
+        }
+    }
+
     public State state;
 
     private Manager gameManager;
@@ -26,12 +46,7 @@ public class BattleManager : MonoBehaviour
     public GameObject battleCaptionPanel;
     public GameObject backButton;
 
-    public List<unit> tempAllies;
-    public List<stats> allyStatsLevel;
-    public List<stats> allyTemporaryStats;
-    public List<unit> enemies;
-    public List<stats> enemyStatsLevel;
-    public List<stats> enemyTemporaryStats;
+    public List<tempUnit> tempUnits;
 
     public List<attack> actions;
 
@@ -44,10 +59,7 @@ public class BattleManager : MonoBehaviour
     {
         gameManager = GameObject.Find("Manager").GetComponent<Manager>();
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
-        allyStatsLevel = new List<stats>();
-        allyTemporaryStats = new List<stats>();
-        enemyStatsLevel = new List<stats>();
-        enemyTemporaryStats = new List<stats>();
+        tempUnits = new List<tempUnit>();
         actions = new List<attack>();
         finishedChoosing = false;
         counter = 0;
@@ -57,22 +69,6 @@ public class BattleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < tempAllies.Count; i++)
-        {
-            if (i < 3)
-            {
-                allyStatsLevel.Add(new stats());
-                allyTemporaryStats.Add(new stats());
-            }
-        }
-        for (int i = 0; i < enemies.Count; i++)
-        {
-            if (i < 3)
-            {
-                enemyStatsLevel.Add(new stats());
-                enemyTemporaryStats.Add(new stats());
-            }
-        }
         calculateAllUnitStats();
         battleCaption = Instantiate(battleCaptionPanel, transform.parent).GetComponent<BattleCaptionController>();
         state = State.Encounter;
@@ -82,15 +78,7 @@ public class BattleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            allyStatsLevel[0].attack += 1;
-        }
-        else if (Input.GetKeyDown(KeyCode.P))
-        {
-            allyStatsLevel[0].attack -= 1;
-        }
-        else if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J))
         {
             calculateAllUnitStats();
         }
@@ -102,26 +90,13 @@ public class BattleManager : MonoBehaviour
 
     public void arrangeActionOrder()
     {
-        List<stats> battleStats = new List<stats>();
-        List<float> speedList = new List<float>();
-        List<float> arrangedSpeedList = new List<float>();
-        foreach (stats i in allyTemporaryStats) battleStats.Add(i);
-        foreach (stats i in enemyTemporaryStats) battleStats.Add(i);
-        foreach (stats i in battleStats) speedList.Add(i.speed);
-        while (speedList.Count > 0)
-        {
-            int a = speedList.IndexOf(speedList.Max());
-            arrangedSpeedList.Add(speedList[a]);
-            Debug.Log(speedList[a]);
-            speedList.Remove(speedList[a]);
-        }
-        
+
+
     }
 
     public void calculateAllUnitStats()
     {
-        for (int i = 0; i < tempAllies.Count; i++) if (i < 3) allyTemporaryStats[i] = unit.statusCalculation(tempAllies[i], allyStatsLevel[i]);
-        for (int i = 0; i < enemies.Count; i++) if (i < 3) enemyTemporaryStats[i] = unit.statusCalculation(enemies[i], enemyStatsLevel[i]);
+        for (int i = 0; i < tempUnits.Count; i++) tempUnits[i].tempStats = unit.statusCalculation(tempUnits[i].unit, tempUnits[i].statsLevel);
     }
 
     public GameObject InstantiateCommandPanel(int index)
@@ -132,17 +107,20 @@ public class BattleManager : MonoBehaviour
         return commandPanel;
     }
 
-    
+
 
     private void UpdateAllyUnits()
     {
-        foreach (unit tempAlly in tempAllies)
+        foreach (tempUnit _tempUnit in tempUnits)
         {
-            for (int i = 0; i < gameManager.allies.Count; i++)
+            if (_tempUnit.isAlly)
             {
-                if (tempAlly.unit_id == gameManager.allies[i].unit_id)
+                for (int i = 0; i < gameManager.allies.Count; i++)
                 {
-                    gameManager.allies[i] = new unit(tempAlly, false);
+                    if (_tempUnit.unit.unit_id == gameManager.allies[i].unit_id)
+                    {
+                        gameManager.allies[i] = new unit(_tempUnit.unit, false);
+                    }
                 }
             }
         }
@@ -170,13 +148,6 @@ public class BattleManager : MonoBehaviour
                 nextStep = false;
                 StartCoroutine(OnWaitingForAction());
                 yield return new WaitUntil(() => nextStep);
-                state = State.WaitForOpponent;
-            }
-            else if (state == State.WaitForOpponent)
-            {
-                nextStep = false;
-                StartCoroutine(OnWaitingForOpponent());
-                yield return new WaitUntil(() => nextStep);
                 state = State.Processing;
             }
             else if (state == State.Processing)
@@ -188,7 +159,7 @@ public class BattleManager : MonoBehaviour
                 round++;
             }
         }
-        
+
         if (state == State.End)
         {
             nextStep = false;
@@ -200,7 +171,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator OnEncounter()
     {
         List<string> namesOfEnemies = new List<string>();
-        foreach (unit _unit in enemies) namesOfEnemies.Add(Database.names[_unit.id]);
+        foreach (tempUnit _tempUnit in tempUnits) if (!_tempUnit.isAlly) namesOfEnemies.Add(Database.names[_tempUnit.unit.id]);
 
         string line = String.Join("と", namesOfEnemies);
         battleCaption.playLine(line + "があらわれた！");
@@ -214,57 +185,64 @@ public class BattleManager : MonoBehaviour
     private IEnumerator OnWaitingForAction()
     {
         counter = 0;
-        int numberOfAllies = tempAllies.Count;
-        while ((counter < numberOfAllies) && (counter < 3))
+        while (counter < tempUnits.Count)
         {
-            string name = "";
-            if (tempAllies[counter].id == 1) name = gameManager.playerName;
-            else name = Database.names[tempAllies[counter].id];
-            battleCaption.playLine(name + "はなにをする？");
-            yield return new WaitUntil(() => battleCaption.isNextLine);
-            battleCaption.isNextLine = false;
-
-            GameObject commandPanel = InstantiateCommandPanel(counter);
-            BattleCommandController commandControl = commandPanel.GetComponent<BattleCommandController>();
-            if (counter > 0)
+            if (tempUnits[counter].isAlly)
             {
-                GameObject backButtonObject = Instantiate(backButton, canvas.transform);
-                backButtonObject.transform.SetParent(commandPanel.transform);
+                string name = "";
+                if (tempUnits[counter].unit.id == 1) name = gameManager.playerName;
+                else name = Database.names[tempUnits[counter].unit.id];
+                battleCaption.playLine(name + "はなにをする？");
+                yield return new WaitUntil(() => battleCaption.isNextLine);
+                battleCaption.isNextLine = false;
+
+                GameObject commandPanel = InstantiateCommandPanel(tempUnits.IndexOf(tempUnits[counter]));
+                BattleCommandController commandControl = commandPanel.GetComponent<BattleCommandController>();
+                if (counter > 0)
+                {
+                    GameObject backButtonObject = Instantiate(backButton, canvas.transform);
+                    backButtonObject.transform.SetParent(commandPanel.transform);
+                }
+                yield return new WaitUntil(() => finishedChoosing);
+                finishedChoosing = false;
             }
-            yield return new WaitUntil(() => finishedChoosing);
-            finishedChoosing = false;
+            else
+            {
+                int skillIndex = UnityEngine.Random.Range(0, tempUnits[counter].unit.learnt_skills.Count);
+                bool _isTowardsAlly = true;
+                int _towards = 0;
+                if (Database.skill_data[tempUnits[counter].unit.learnt_skills[skillIndex]].Class == skill.skillClass.STATUS)
+                {
+                    _isTowardsAlly = false;
+                    _towards = getRandomIndex(false);
+                }
+                else
+                {
+                    _isTowardsAlly = true;
+                    _towards = getRandomIndex(true);
+                }
+                actions.Add(new attack(false, _isTowardsAlly, tempUnits[counter].unit.learnt_skills[skillIndex], tempUnits.IndexOf(tempUnits[counter]), _towards));
+            }
             counter++;
         }
         nextStep = true;
         yield return null;
     }
 
-    private IEnumerator OnWaitingForOpponent()
+    private int getRandomIndex(bool isAlly)
     {
-        foreach (unit _unit in enemies)
+        List<int> indexes = new List<int>();
+        for (int i = 0; i < tempUnits.Count; i++)
         {
-            int skillIndex = UnityEngine.Random.Range(0, _unit.learnt_skills.Count);
-            bool _isTowardsAlly = true;
-            int _towards = 0;
-            if (Database.skill_data[_unit.learnt_skills[skillIndex]].Class == skill.skillClass.STATUS)
+            if ((isAlly && tempUnits[i].isAlly) || (!isAlly && !tempUnits[i].isAlly))
             {
-                _isTowardsAlly = false;
-                _towards = UnityEngine.Random.Range(0, enemies.Count);
+                indexes.Add(i);
             }
-            else
-            {
-                _isTowardsAlly = true;
-                _towards = UnityEngine.Random.Range(0, tempAllies.Count);
-            }
-            actions.Add(new attack(false, _isTowardsAlly, _unit.learnt_skills[skillIndex], enemies.IndexOf(_unit), _towards));
         }
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        battleCaption.isNextLine = false;
-
-        nextStep = true;
-        yield return null;
+        return indexes[UnityEngine.Random.Range(0, indexes.Count)];
     }
+
+
 
     private IEnumerator OnProcessing()
     {
@@ -297,10 +275,8 @@ public class BattleManager : MonoBehaviour
             bool hit = false;
 
 
-            if (_attack.isFromAlly) _attacker = tempAllies[_attack.from];
-            else _attacker = enemies[_attack.from];
-            if (_attack.isTowardsAlly) _defender = tempAllies[_attack.towards];
-            else _defender = enemies[_attack.towards];
+            _attacker = tempUnits[_attack.from].unit;
+            _defender = tempUnits[_attack.towards].unit;
 
             string skillName = Database.skill_data[_attack.skillID].Name;
 
@@ -372,6 +348,13 @@ public class BattleManager : MonoBehaviour
         nextStep = true;
         state = State.WaitForAction;
         yield return null;
+    }
+
+    public int getEnemyCount()
+    {
+        int count = 0;
+        foreach (tempUnit _tempUnit in tempUnits) if (!_tempUnit.isAlly) count++;
+        return count;
     }
 
 }

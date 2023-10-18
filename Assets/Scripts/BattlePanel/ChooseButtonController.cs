@@ -29,8 +29,7 @@ public class ChooseButtonController : MonoBehaviour
     }
     void Start()
     {
-        if (isChoosingEnemy) _unit = battleManager.enemies[index];
-        else _unit = battleManager.tempAllies[index];
+        _unit = battleManager.tempUnits[index].unit;
         if (_unit.id == 1) nameText.text = gameManager.playerName;
         else nameText.text = Database.names[_unit.id];
         infoText.text = "Lv." + _unit.level;

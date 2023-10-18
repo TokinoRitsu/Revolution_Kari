@@ -21,7 +21,7 @@ public class AttackPanelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        List<int> skillIDs = battleManager.tempAllies[index].learnt_skills;
+        List<int> skillIDs = battleManager.tempUnits[index].unit.learnt_skills;
         int count = skillIDs.Count;
         for (int i = 0; i < count; i++)
         {

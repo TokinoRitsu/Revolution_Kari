@@ -47,14 +47,7 @@ public class UnitController : MonoBehaviour
     }
     void Update()
     {
-        if (isAlly)
-        {
-            _unit = battleManager.tempAllies[index];
-        }
-        else
-        {
-            _unit = battleManager.enemies[index];
-        }
+        _unit = battleManager.tempUnits[index].unit;
         
         if (_unit.id == 1) unitName = gameManager.playerName;
         else unitName = Database.names[_unit.id];

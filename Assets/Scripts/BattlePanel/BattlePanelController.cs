@@ -17,14 +17,20 @@ public class BattlePanelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < 3; i++)
+        int allyCounter = 0;
+        int enemyCounter = 0;
+        foreach(BattleManager.tempUnit _tempUnit in battleManager.tempUnits)
         {
-            if (i < battleManager.tempAllies.Count) InstantiateUnit(i, true);
-        }
-
-        for (int i = 0; i < 3; i++)
-        {
-            if (i < battleManager.enemies.Count) InstantiateUnit(i, false);
+            if (_tempUnit.isAlly)
+            {
+                InstantiateUnit(battleManager.tempUnits.IndexOf(_tempUnit), allyCounter);
+                allyCounter++;
+            }
+            else
+            {
+                InstantiateUnit(battleManager.tempUnits.IndexOf(_tempUnit), enemyCounter);
+                enemyCounter++;
+            }
         }
     }
 
@@ -34,14 +40,14 @@ public class BattlePanelController : MonoBehaviour
         
     }
 
-    private void InstantiateUnit(int index, bool isAlly)
+    private void InstantiateUnit(int index, int counter)
     {
         GameObject _object = Instantiate(unitPrefab, transform);
         UnitController unitController = _object.GetComponent<UnitController>();
-        if (isAlly) _object.GetComponent<RectTransform>().anchoredPosition = new Vector3(-500, 325 - index * 275f);
-        else _object.GetComponent<RectTransform>().anchoredPosition = new Vector3(500, 325 - index * 275f);
+        if (battleManager.tempUnits[index].isAlly) _object.GetComponent<RectTransform>().anchoredPosition = new Vector3(-500, 325 - counter * 275f);
+        else _object.GetComponent<RectTransform>().anchoredPosition = new Vector3(500, 325 - counter * 275f);
         unitController.index = index;
-        unitController.isAlly = isAlly;
+        unitController.isAlly = battleManager.tempUnits[index].isAlly;
     }
 
 }

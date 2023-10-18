@@ -25,13 +25,20 @@ public class ChoosePanelController : MonoBehaviour
         closeButtonObject.transform.SetParent(transform);
         if (isChoosingEnemy)
         {
-            for (int i = 0; i < battleManager.enemies.Count; i++)
+            int counter = 0;
+            int counter2 = 0;
+            while (counter2 < battleManager.tempUnits.Count)
             {
-                GameObject chooseButtonObject = Instantiate(chooseButton, canvas.transform);
-                chooseButtonObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 100 - i * 200);
-                chooseButtonObject.transform.SetParent(transform);
-                ChooseButtonController chooseButtonController = chooseButtonObject.GetComponent<ChooseButtonController>();
-                chooseButtonController.index = i;
+                if (!battleManager.tempUnits[counter2].isAlly)
+                {
+                    GameObject chooseButtonObject = Instantiate(chooseButton, canvas.transform);
+                    chooseButtonObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 100 - counter * 200);
+                    chooseButtonObject.transform.SetParent(transform);
+                    ChooseButtonController chooseButtonController = chooseButtonObject.GetComponent<ChooseButtonController>();
+                    chooseButtonController.index = counter2;
+                    counter++;
+                }
+                counter2++;
             }
         }
     }

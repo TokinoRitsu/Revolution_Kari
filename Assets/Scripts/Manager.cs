@@ -58,12 +58,9 @@ public class Manager : MonoBehaviour, IDataPersistence
         GameObject _battlePanel = Instantiate(battlePanel, canvas.transform);
         _battlePanel.transform.SetParent(canvas.transform);
         BattleManager battleManager = _battlePanel.GetComponentInChildren<BattleManager>();
-        battleManager.tempAllies = new List<unit>();
-        foreach (unit ally in allies) battleManager.tempAllies.Add(new unit(ally, false));
-        battleManager.enemies = new List<unit>();
-        foreach (unit enemy in enemyUnits) battleManager.enemies.Add(new unit(enemy, true));
-
-
+        battleManager.tempUnits = new List<BattleManager.tempUnit>();
+        for (int i = 0; i < allies.Count; i++) if (i < 3) battleManager.tempUnits.Add(new BattleManager.tempUnit(true, new unit(allies[i], false)));
+        foreach (unit enemy in enemyUnits) battleManager.tempUnits.Add(new BattleManager.tempUnit(false, new unit(enemy, true)));
     }
 
     public void endBattle()

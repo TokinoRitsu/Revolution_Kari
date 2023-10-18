@@ -60,8 +60,14 @@ public class BackButtonController : MonoBehaviour
     {
         if (gameManager.mode == Manager.gameMode.Battling)
         {
-            battleManager.counter -= 2;
+            battleManager.counter--;
             battleManager.actions.Remove(battleManager.actions[battleManager.actions.Count - 1]);
+
+            while (battleManager.tempUnits[battleManager.counter].isAlly)
+            {
+                battleManager.counter--;
+                battleManager.actions.Remove(battleManager.actions[battleManager.actions.Count - 1]);
+            }
             Destroy(transform.parent.gameObject);
             battleManager.finishedChoosing = true;
         }
