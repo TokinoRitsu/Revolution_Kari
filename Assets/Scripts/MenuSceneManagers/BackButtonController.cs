@@ -74,6 +74,7 @@ public class BackButtonController : MonoBehaviour
             Destroy(transform.parent.gameObject);
             battleManager.finishedChoosing = true;
         }
+
     }
 
     private IEnumerator backToPreviousPanel()
