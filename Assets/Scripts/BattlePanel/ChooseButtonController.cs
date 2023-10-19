@@ -41,7 +41,7 @@ public class ChooseButtonController : MonoBehaviour
     {
         if (isChoosingEnemy)
         {
-            battleManager.actions.Add(new attack(true, false, choosePanelController.skillID, choosePanelController.from, index));
+            battleManager.actions.Add(new attack(choosePanelController.skillID, choosePanelController.from, index));
             battleManager.finishedChoosing = true;
             Destroy(battleCommandPanel.gameObject);
         }

@@ -90,8 +90,11 @@ public class BattleManager : MonoBehaviour
 
     public void arrangeActionOrder()
     {
-
-
+        Dictionary<float, attack> speedActionPairs = new Dictionary<float, attack>();
+        foreach(attack _attack in actions) speedActionPairs.Add(tempUnits[_attack.from].tempStats.speed, _attack);
+        var sortedPairs = speedActionPairs.OrderByDescending(pair => pair.Key);
+        actions.Clear();
+        foreach (var pair in sortedPairs) actions.Add(pair.Value);
     }
 
     public void calculateAllUnitStats()
@@ -209,19 +212,16 @@ public class BattleManager : MonoBehaviour
             else
             {
                 int skillIndex = UnityEngine.Random.Range(0, tempUnits[counter].unit.learnt_skills.Count);
-                bool _isTowardsAlly = true;
                 int _towards = 0;
                 if (Database.skill_data[tempUnits[counter].unit.learnt_skills[skillIndex]].Class == skill.skillClass.STATUS)
                 {
-                    _isTowardsAlly = false;
                     _towards = getRandomIndex(false);
                 }
                 else
                 {
-                    _isTowardsAlly = true;
                     _towards = getRandomIndex(true);
                 }
-                actions.Add(new attack(false, _isTowardsAlly, tempUnits[counter].unit.learnt_skills[skillIndex], tempUnits.IndexOf(tempUnits[counter]), _towards));
+                actions.Add(new attack(tempUnits[counter].unit.learnt_skills[skillIndex], tempUnits.IndexOf(tempUnits[counter]), _towards));
             }
             counter++;
         }
