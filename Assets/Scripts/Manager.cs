@@ -41,9 +41,9 @@ public class Manager : MonoBehaviour, IDataPersistence
         {
             allies.Add(new unit(3, 100));
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            allies.Add(new unit(4, 20));
+            allies.Add(new unit(4, 100));
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
