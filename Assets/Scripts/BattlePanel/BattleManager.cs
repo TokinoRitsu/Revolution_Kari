@@ -344,6 +344,19 @@ public class BattleManager : MonoBehaviour
                 battleCaption.isNextLine = false;
             }
             actions.Remove(actions[0]);
+
+            if (_defender.hp_now == 0)
+            {
+                line = defenderName + "がきぜつした！";
+                battleCaption.isNextLine = false;
+                battleCaption.playLine(line);
+                yield return new WaitUntil(() => battleCaption.isNextLine);
+                battleCaption.isNextLine = false;
+                // きぜつ処理
+                
+            }
+
+
         }
         nextStep = true;
         state = State.WaitForAction;
