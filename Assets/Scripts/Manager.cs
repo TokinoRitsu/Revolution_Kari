@@ -11,9 +11,11 @@ public class Manager : MonoBehaviour, IDataPersistence
     public string playerName;
     public GameObject battlePanel;
     private Canvas canvas;
+    private UIManager uiManager;
     public gameMode mode;
 
     private float playTimer = 0;
+
 
     public enum gameMode
     {
@@ -28,6 +30,10 @@ public class Manager : MonoBehaviour, IDataPersistence
     {
         mode = gameMode.Normal;
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
+        {
+            uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
+        }
     }
 
     // Update is called once per frame
@@ -50,7 +56,18 @@ public class Manager : MonoBehaviour, IDataPersistence
             startBattle(Database.enemy_info[Database.enemy_info.Count - 1]);
         }
     }
-    
+
+    public IEnumerator WarpToMap(WarpController warp)
+    {
+        uiManager.StartFadeIn();
+        yield return new WaitForSeconds(1);
+        Destroy(GameObject.FindGameObjectWithTag("Map"));
+        Instantiate(warp.mapObject);
+        GameObject.FindGameObjectWithTag("Player").transform.position = warp.warpPosition;
+        uiManager.StartFadeOut();
+    }
+
+
     // Start Battle------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public void startBattle(List<unit> enemyUnits)
     {

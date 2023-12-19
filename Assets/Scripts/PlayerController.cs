@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private UIManager uiManager;
     private Canvas canvas;
 
+
     public GameObject GameMenuPanel;
     private void Awake()
     {
@@ -26,6 +27,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gameManager.mode == Manager.gameMode.Normal)
+        {
+            Move_Normal();
+        }
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             foreach(unit _unit in gameManager.allies)
@@ -86,6 +92,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Move_Normal()
+    {
+        Vector2 moveInput = Vector2.zero;
+        if (Input.GetKey(KeyCode.W)) moveInput += Vector2.up;
+        if (Input.GetKey(KeyCode.S)) moveInput += Vector2.down;
+        if (Input.GetKey(KeyCode.A)) moveInput += Vector2.left;
+        if (Input.GetKey(KeyCode.D)) moveInput += Vector2.right;
+        transform.Translate(new Vector3(moveInput.x, moveInput.y) * 0.05f);
+    }
+
     public void Interact_Talking()
     {
         CaptionPanelController captionControl = GameObject.FindGameObjectWithTag("CaptionPanel").GetComponent<CaptionPanelController>();
@@ -107,4 +123,15 @@ public class PlayerController : MonoBehaviour
     {
         uiManager.openMenu();
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log(collision.gameObject.name);
+        if (collision.gameObject.tag == "Warp")
+        {
+            StartCoroutine(gameManager.WarpToMap(collision.gameObject.GetComponent<WarpController>()));
+        }
+    }
+
+
 }

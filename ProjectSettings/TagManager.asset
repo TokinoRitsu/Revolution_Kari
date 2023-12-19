@@ -19,6 +19,8 @@ TagManager:
   - GameMenuPanel
   - CloseButton
   - CloseMenuButton
+  - Warp
+  - Map
   layers:
   - Default
   - TransparentFX
