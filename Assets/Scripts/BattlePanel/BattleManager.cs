@@ -354,6 +354,9 @@ public class BattleManager : MonoBehaviour
                 battleCaption.isNextLine = false;
                 // きぜつ処理
                 
+
+
+
             }
 
 
